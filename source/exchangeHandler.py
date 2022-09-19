@@ -27,6 +27,9 @@ class ExchangeHandler:
 
         print(f'Coin: {extracted_data["coin"]},', f'Image: {extracted_data["price"]},', f'Current: {price}')
         if not self.validate.by_price_and_old_price(price, extracted_data['price']):
+            if self.parent is not None:
+                self.parent.stop()
+
             return False
 
         # self.create_order(extracted_data)

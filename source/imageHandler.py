@@ -1,7 +1,4 @@
 
-EXTRA_PIXEL = 108
-
-
 class ImageHandler:
 
     def __init__(self, glv):
@@ -20,7 +17,7 @@ class ImageHandler:
             if pixels[last_pixel][i] != 0:
                 coin = self.glv.coins[i]
                 exchange_type_id = pixels[last_pixel][i]
-            extra_data.append(pixels[i][EXTRA_PIXEL])
+            extra_data.append(pixels[i][len(pixels)])
 
         return {
             'coin': coin,
@@ -36,5 +33,9 @@ class ImageHandler:
         for char in extra_data:
             if char == 255:
                 char = '.'
+            elif char == 254:
+                char = 'e'
+            elif char == 253:
+                char = '-'
             price_string += str(char)
         return float(''.join(price_string))

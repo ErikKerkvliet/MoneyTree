@@ -50,7 +50,9 @@ if __name__ == '__main__':
     elif len(sys.argv) == 3:
         main = Main(sys.argv[1], sys.argv[2].upper())
     else:
-        main = Main("../../../Desktop/img/19-09-2022-04-00-59-XDB.png,../../../Desktop/img/19-09-2022-04-00-59-XDB.png")
+        main = Main("/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:32_DUSK.png,"
+                    "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:31_CRV.png,"
+                    "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:30_YFI.png")
 
     while not main.start():
         pass
