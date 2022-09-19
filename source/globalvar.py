@@ -1,68 +1,14 @@
-from bitpanda.enums import OrderSide
-from bitpanda.Pair import Pair
-
-EURO = 'EUR'
-
 
 class Globalvar:
 
     def __init__(self):
         self.private = self.get_private_data()
         self.coins = self.currencies()
-        self.exchange_amount = 1
-        self.order_data = None
-        self.coin = ''
-        self.extra_data = []
-        self.price = 0.0
-
-    def set_coin(self, coin_id):
-        self.coin = self.coins[coin_id]
-
-    def set_price(self, price):
-        self.price = price
-
-    # [0 => week day, 1-2 => day, 3-4 => month, 5-6 => year, 7 => timer, 8 => result_time]
-    def set_extra_data(self, extra_data):
-        self.extra_data = extra_data
-
-    def get_result_time(self):
-        return self.extra_data[8]
 
     def get_private_data(self) -> dict:
         return {
             'key': self.get_key()
         }
-
-    @staticmethod
-    def get_action(action):
-        if action == 255:
-            return OrderSide.BUY.value
-        elif action == 127:
-            return OrderSide.SELL.value
-        elif action == 0:
-            return False
-        else:
-            return None
-
-    def set_order_data(self, exchange_type_id):
-        exchange_type = self.get_action(exchange_type_id)
-
-        self.order_data = {
-            'pair': self.get_pair(self.coin, exchange_type),
-            'type': self.get_action(exchange_type_id),
-            'amount': self.exchange_amount,
-        }
-
-    @staticmethod
-    def get_pair(coin, exchange_type):
-        if exchange_type == OrderSide.BUY.value:
-            return Pair(coin, EURO)
-        elif exchange_type == OrderSide.SELL.value:
-            return Pair(EURO, coin)
-        return None
-
-    def get_order_data(self) -> dict:
-        return self.order_data
 
     @staticmethod
     def get_key() -> str:

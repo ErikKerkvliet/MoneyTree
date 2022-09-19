@@ -3,16 +3,16 @@ import json
 from datetime import datetime
 
 from bitpanda.BitpandaClient import BitpandaClient
+from exceptions import CoinIndexNotFoundException, CurrencyIndexNotFoundException
 import http.client
 from bitpanda.enums import TimeUnit
 from bitpanda.Pair import Pair
 
 
-class HandleExchange:
+class BitpandaCalls:
 
-    def __init__(self, glv, exchange_type):
+    def __init__(self, glv):
         self.glv = glv
-        self.type = exchange_type
 
         self.connection = http.client.HTTPSConnection("api.bitpanda.com")
         self.headers = {'Accept': "application/json"}
@@ -74,14 +74,22 @@ class HandleExchange:
                 continue
 
         response_data = json.loads(data.decode("utf-8"))
-        print(response_data)
-        data = self.glv.coin_order(response_data)
-        print(data)
-        if True:
-            for coin in response_data.keys():
-                print(self.glv.coin, self.glv.price, coin, response_data[coin]['EUR'])
 
-        return response_data
+        if coin not in response_data.keys():
+            raise CoinIndexNotFoundException
+
+        if coin == 'ALL' and currency != 'ALL':
+            coins_data = {}
+            for coin in response_data.keys():
+                for currency in coin.keys():
+                    coins_data[currency] = coin[currency]
+            return coins_data
+
+        if coin == 'ALL':
+            return response_data
+
+        if currency not in response_data[coin]:
+            raise CurrencyIndexNotFoundException
 
         if currency == 'ALL':
             return response_data[coin]
@@ -95,7 +103,9 @@ class HandleExchange:
     # print(json.dumps(response['response']))
     # UNI , EUR sell 2 UNI voor ? EURO
     # await client.close()
-    async def create_order(self) -> dict:
-        order_data = self.glv.get_order_data()
-
-        return await self.client.create_market_order(order_data['pair'], order_data['type'], order_data['amount'])
+    async def create_order(self, order_data) -> dict:
+        return await self.client.create_market_order(
+            order_data['pair'],
+            order_data['exchange_type'],
+            order_data['amount']
+        )
