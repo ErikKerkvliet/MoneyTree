@@ -13,11 +13,7 @@ class BitpandaCalls:
 
     def __init__(self, glv):
         self.glv = glv
-
-        self.connection = http.client.HTTPSConnection("api.bitpanda.com")
-        self.headers = {'Accept': "application/json"}
         self.client = BitpandaClient(self.glv.private['key'])
-        self.loop = asyncio.get_event_loop()
 
     async def get_currencies(self, coin='all'):
         response = await self.client.get_currencies()
@@ -56,21 +52,26 @@ class BitpandaCalls:
         print(response)
         exit()
 
-    def ticker(self, coin='ALL', currency='ALL'):
+    @staticmethod
+    def ticker(coin='ALL', currency='ALL'):
         data = None
+
+        connection = http.client.HTTPSConnection("api.bitpanda.com")
         while data is None:
             try:
-                self.connection.request("GET", "/v1/ticker", headers=self.headers)
+                headers = {'Accept': "application/json"}
 
-                response = self.connection.getresponse()
+                connection.request("GET", "/v1/ticker", headers=headers)
+
+                response = connection.getresponse()
                 data = response.read()
             except http.client.NotConnected:
                 print('Exception: disconnected. \n Reconnect')
-                self.connection = http.client.HTTPSConnection("api.bitpanda.com")
+                connection = http.client.HTTPSConnection("api.bitpanda.com")
                 continue
             except http.client.HTTPException:
                 print('Exception: HTTP Exception. \n Reconnect')
-                self.connection = http.client.HTTPSConnection("api.bitpanda.com")
+                connection = http.client.HTTPSConnection("api.bitpanda.com")
                 continue
 
         response_data = json.loads(data.decode("utf-8"))
@@ -82,7 +83,7 @@ class BitpandaCalls:
             coins_data = {}
             for coin in response_data.keys():
                 for currency in coin.keys():
-                    coins_data[currency] = coin[currency]
+                    coins_data[currency] = float(coin[currency])
             return coins_data
 
         if coin == 'ALL':
@@ -94,7 +95,7 @@ class BitpandaCalls:
         if currency == 'ALL':
             return response_data[coin]
 
-        return response_data[coin][currency]
+        return float(response_data[coin][currency])
 
     # UNI , EURO Koop 2 UNI voor ? EURO
     # side = OrderSide('BUY')

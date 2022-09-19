@@ -1,9 +1,15 @@
+from PIL import Image
+from bitpandaCalls import BitpandaCalls
+from imageHandler import ImageHandler
+
 
 class Globalvar:
 
     def __init__(self):
         self.private = self.get_private_data()
         self.coins = self.currencies()
+        self.bitpanda = BitpandaCalls(self)
+        self.image_handler = ImageHandler(self)
 
     def get_private_data(self) -> dict:
         return {
@@ -15,6 +21,29 @@ class Globalvar:
         f = open('../key', 'r')
 
         return f.read()
+
+    def get_bitpanda_calls(self) -> BitpandaCalls:
+        return self.bitpanda
+
+    def get_image_handler(self):
+        return self.image_handler
+
+    # noinspection PyUnresolvedReferences
+    @staticmethod
+    def get_image_pixel_data(path) -> list:
+        image = Image.open(path)
+
+        pixels = image.load()
+        width, height = image.size
+
+        image_data = []
+        for x in range(width):
+            image_data.append([])
+            for y in range(height):
+                pixel = pixels[x, y]
+                image_data[x].append(pixel)
+
+        return image_data
 
     def coin_order(self, coins_data):
         coins = {}

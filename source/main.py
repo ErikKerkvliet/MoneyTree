@@ -1,9 +1,8 @@
 import sys
 import logging
-import _thread
 
 from globalvar import Globalvar
-from exchangeHandler import ExchangeHandler
+from exchangeThread import ExchangeThread
 from bitpanda.enums import OrderSide
 
 # from bitpanda.subscriptions import AccountSubscription, PricesSubscription, OrderbookSubscription, \
@@ -21,14 +20,25 @@ class Main:
         self.glv = Globalvar()
 
     def start(self):
-        for image_path in self.image_paths:
-            try:
-                _thread.start_new_thread(self.start_exchange, (image_path,))
-            except:
-                print("Error: unable to start thread")
+        threads = []
+        for i, image_path in enumerate(self.image_paths):
+            pixel_data = self.glv.get_image_pixel_data(image_path)
 
-    def start_exchange(self, image_path):
-        ExchangeHandler(self.glv, self.exchange_type).start(image_path)
+            image_data = self.glv.image_handler.extract_data(pixel_data)
+
+            thread = ExchangeThread(self.glv, self.exchange_type, image_data)
+
+            thread.start()
+            threads.append(thread)
+
+        for t in threads:
+            t.join()
+
+        while len(threads) > 0:
+            for i, t in enumerate(threads):
+                if not t.is_running():
+                    del(threads[i])
+        exit(0)
 
 
 if __name__ == '__main__':
@@ -40,7 +50,8 @@ if __name__ == '__main__':
     elif len(sys.argv) == 3:
         main = Main(sys.argv[1], sys.argv[2].upper())
     else:
-        main = Main("/home/erik/PycharmProjects/TrainingData/source/data/images_20/no/18-09-2022 15:36:45_BTC.png")
+        main = Main("../../../Desktop/img/19-09-2022-04-00-59-XDB.png,../../../Desktop/img/19-09-2022-04-00-59-XDB.png")
 
-    main.start()
-    exit()
+    while not main.start():
+        pass
+    exit(0)

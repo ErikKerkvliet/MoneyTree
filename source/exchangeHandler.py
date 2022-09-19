@@ -1,5 +1,3 @@
-from imageHandler import ImageHandler
-from bitpandaCalls import BitpandaCalls
 from validate import Validate
 
 from bitpanda.enums import OrderSide
@@ -13,27 +11,28 @@ DEFAULT_CURRENCY = 'EUR'
 
 class ExchangeHandler:
 
-    def __init__(self, glv, exchange_type=None):
-        self.glv = glv
-        self.validate = Validate()
-        self.exchange_type = exchange_type
-        self.bitpanda = BitpandaCalls(self.glv)
-        self.image_handler = ImageHandler(self.glv)
+    def __init__(self, parent=None, glv=None, exchange_type=None):
+        self.parent = parent
+        self.glv = glv if parent is None else parent.glv
+        self.exchange_type = exchange_type if parent is None else parent.exchange_type
         self.amount = 1
 
-    def start(self, image_path):
-        image_data = self.image_handler.extract_data(image_path)
+        self.validate = Validate()
+        self.bitpanda = self.glv.get_bitpanda_calls()
 
-        time.sleep(image_data['wait_time'])
+    def start(self, extracted_data: dict):
+        # time.sleep(extracted_data['wait_time'])
 
-        price = self.bitpanda.ticker(image_data['coin'], DEFAULT_CURRENCY)
+        price = self.bitpanda.ticker(extracted_data['coin'], DEFAULT_CURRENCY)
 
-        if not self.validate.by_price_and_old_price(price, image_data['price']):
-            return
+        print(f'Coin: {extracted_data["coin"]},', f'Image: {extracted_data["price"]},', f'Current: {price}')
+        if not self.validate.by_price_and_old_price(price, extracted_data['price']):
+            return False
 
-        exit()
+        # self.create_order(extracted_data)
 
-        self.create_order(image_data)
+        if self.parent is not None:
+            self.parent.stop()
 
     def create_order(self, exchange_data):
         exchange_type = self.exchange_type
