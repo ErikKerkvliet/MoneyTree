@@ -12,7 +12,7 @@ class ExchangeThread(threading.Thread):
         self.image_data = image_data
 
     def run(self):
-        return ExchangeHandler(self).start(self.image_data)
+        return ExchangeHandler(self, self.glv, self.exchange_type).start(self.image_data)
 
     def stop(self) -> None:
         self._running = False

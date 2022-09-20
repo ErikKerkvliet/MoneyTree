@@ -1,3 +1,5 @@
+from bitpanda.enums import OrderSide
+
 
 class ImageHandler:
 
@@ -22,7 +24,7 @@ class ImageHandler:
         return {
             'coin': coin,
             'price': self.get_price(extra_data[10:25]),
-            'exchange_type_id': exchange_type_id,
+            'exchange_type': self.get_action(exchange_type_id),
             'wait_time': extra_data[8],
         }
 
@@ -39,3 +41,14 @@ class ImageHandler:
                 char = '-'
             price_string += str(char)
         return float(''.join(price_string))
+
+    @staticmethod
+    def get_action(action):
+        if action == 255:
+            return OrderSide.BUY.value
+        elif action == 127:
+            return OrderSide.SELL.value
+        elif action == 0:
+            return False
+        else:
+            return None

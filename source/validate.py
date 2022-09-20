@@ -10,6 +10,7 @@ class Validate:
         # Price must have risen by 0.03%
         if price > (old_price * 1.03):
             return True
+        return False
 
     @staticmethod
     def by_balance_and_current_price(balance, current_price) -> bool:
