@@ -14,7 +14,7 @@ class ExchangeThread(threading.Thread):
     def run(self):
         return ExchangeHandler(self).start(self.image_data)
 
-    def stop(self):
+    def stop(self) -> None:
         self._running = False
 
     def is_running(self) -> bool:

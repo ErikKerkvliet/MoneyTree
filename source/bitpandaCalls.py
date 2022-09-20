@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 
 from bitpanda.BitpandaClient import BitpandaClient
+from bitpanda.subscriptions import MarketTickerSubscription
 from exceptions import CoinIndexNotFoundException, CurrencyIndexNotFoundException
 import http.client
 from bitpanda.enums import TimeUnit

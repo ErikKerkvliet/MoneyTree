@@ -17,25 +17,18 @@ class ExchangeHandler:
         self.exchange_type = exchange_type if parent is None else parent.exchange_type
         self.amount = 1
 
-        self.validate = Validate()
+        self.validate = Validate(self.glv)
         self.bitpanda = self.glv.get_bitpanda_calls()
 
-    def start(self, extracted_data: dict):
+    def start(self, extracted: dict):
         # time.sleep(extracted_data['wait_time'])
 
-        price = self.bitpanda.ticker(extracted_data['coin'], DEFAULT_CURRENCY)
-
-        print(f'Coin: {extracted_data["coin"]},', f'Image: {extracted_data["price"]},', f'Current: {price}')
-        if not self.validate.by_price_and_old_price(price, extracted_data['price']):
-            if self.parent is not None:
-                self.parent.stop()
-
-            return False
+        if not self.validate.by_price_coin_and_currency(extracted['price'], extracted['coin'], DEFAULT_CURRENCY):
+            self.stop_thread()
 
         # self.create_order(extracted_data)
 
-        if self.parent is not None:
-            self.parent.stop()
+        self.stop_thread()
 
     def create_order(self, exchange_data):
         exchange_type = self.exchange_type
@@ -54,9 +47,13 @@ class ExchangeHandler:
 
         loop.run_until_complete(self.bitpanda.create_order(order_data))
 
-        self.close(loop)
+        self.close_loop(loop)
 
-    def close(self, loop):
+    def stop_thread(self):
+        if self.parent is not None:
+            self.parent.stop()
+
+    def close_loop(self, loop):
         loop.run_until_complete(self.bitpanda.close_client())
 
     @staticmethod

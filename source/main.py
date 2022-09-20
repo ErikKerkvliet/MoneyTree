@@ -5,8 +5,6 @@ from globalvar import Globalvar
 from exchangeThread import ExchangeThread
 from bitpanda.enums import OrderSide
 
-# from bitpanda.subscriptions import AccountSubscription, PricesSubscription, OrderbookSubscription, \
-#     CandlesticksSubscription, MarketTickerSubscription, CandlesticksSubscriptionParams
 LOG = logging.getLogger("bitpanda")
 LOG.setLevel(logging.DEBUG)
 LOG.addHandler(logging.StreamHandler())
@@ -38,7 +36,6 @@ class Main:
             for i, t in enumerate(threads):
                 if not t.is_running():
                     del(threads[i])
-        exit(0)
 
 
 if __name__ == '__main__':
@@ -50,10 +47,14 @@ if __name__ == '__main__':
     elif len(sys.argv) == 3:
         main = Main(sys.argv[1], sys.argv[2].upper())
     else:
-        main = Main("/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:32_DUSK.png,"
-                    "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:31_CRV.png,"
-                    "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:30_YFI.png")
+        image_paths = [
+            "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:32_DUSK.png",
+            "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:31_CRV.png",
+            "/home/erik/Desktop/img/20-09-2022-06-42-56-XDB.png",
+            "/home/erik/Desktop/img/20-09-2022-06-56-18-XDB.png",
+            "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:30_YFI.png"
+        ]
+        main = Main(','.join(image_paths))
+    main.start()
 
-    while not main.start():
-        pass
     exit(0)
