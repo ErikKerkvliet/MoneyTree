@@ -1,7 +1,11 @@
 import sys
 import logging
+import time
 
 from globalvar import Globalvar
+from checkForFilesThread import CheckForFilesThread
+from tickerThread import TickerThread
+from threadManager import ThreadManager
 from exchangeThread import ExchangeThread
 from bitpanda.enums import OrderSide
 
@@ -16,28 +20,36 @@ class Main:
         self.image_paths = image_paths.split(',')
         self.exchange_type = exchange_type
         self.glv = Globalvar()
+        self.threadManager = ThreadManager(self.glv)
 
     def start(self):
-        threads = []
-        for i, image_path in enumerate(self.image_paths):
-            pixel_data = self.glv.get_image_pixel_data(image_path)
+        self.threadManager.add(TickerThread(self.glv))
 
-            image_data = self.glv.image_handler.extract_data(pixel_data)
+        for image_path in self.image_paths:
+            self.image_found(image_path)
 
-            exchange_type = self.exchange_type if self.exchange_type is not None else image_data['exchange_type']
+        self.threadManager.add(CheckForFilesThread(self.glv))
 
-            thread = ExchangeThread(self.glv, exchange_type, image_data)
+    def image_found(self, image_path):
+        if '.png' not in image_path:
+            self.problem_with_file(image_path)
+            return
 
-            thread.start()
-            threads.append(thread)
+        pixel_data = self.glv.get_image_pixel_data(image_path)
 
-        for thread in threads:
-            thread.join()
+        if not pixel_data:
+            self.problem_with_file(image_path)
+            return
 
-        while len(threads) > 0:
-            for i, thread in enumerate(threads):
-                if not thread.is_running():
-                    del(threads[i])
+        image_data = self.glv.image_handler.extract_data(pixel_data)
+
+        exchange_type = self.exchange_type if self.exchange_type is not None else image_data['exchange_type']
+
+        self.threadManager.add(ExchangeThread(self.glv, exchange_type, image_data))
+
+    @staticmethod
+    def problem_with_file(path):
+        pass
 
 
 if __name__ == '__main__':
@@ -51,11 +63,9 @@ if __name__ == '__main__':
         main = Main(sys.argv[1], sys.argv[2].upper())
     else:
         paths = [
-            "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:32_DUSK.png",
-            "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:31_CRV.png",
-            "/home/erik/Desktop/img/20-09-2022-06-42-56-XDB.png",
-            "/home/erik/Desktop/img/20-09-2022-06-56-18-XDB.png",
-            "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:30_YFI.png"
+            # "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:32_DUSK.png",
+            # "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:31_CRV.png",
+            # "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:30_YFI.png"
         ]
         main = Main(','.join(paths), OrderSide.BUY.value)
     main.start()

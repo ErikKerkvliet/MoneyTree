@@ -76,14 +76,15 @@ class BitpandaCalls:
 
         response_data = json.loads(data.decode("utf-8"))
 
-        if coin not in response_data.keys():
+        if coin != 'ALL' and coin not in response_data.keys():
             raise CoinIndexNotFoundException
 
         if coin == 'ALL' and currency != 'ALL':
             coins_data = {}
             for coin in response_data.keys():
-                for currency in coin.keys():
-                    coins_data[currency] = float(coin[currency])
+                coins_data[coin] = {}
+                for currency_code in response_data[coin].keys():
+                    coins_data[coin] = float(response_data[coin][currency_code])
             return coins_data
 
         if coin == 'ALL':

@@ -5,7 +5,7 @@ from exchangeHandler import ExchangeHandler
 
 class ExchangeThread(threading.Thread):
     def __init__(self, glv, exchange_type, image_data):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name='exchange')
         self._running = True
         self.glv = glv
         self.exchange_type = exchange_type

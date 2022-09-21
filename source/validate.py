@@ -1,7 +1,10 @@
+import asyncio
+
 
 class Validate:
 
     def __init__(self, glv):
+        self.glv = glv
         self.bitpanda = glv.get_bitpanda_calls()
 
     """ Validate by price """
@@ -19,18 +22,22 @@ class Validate:
         return False
 
     """ Validate by price coin and currency """
-    def by_price_coin_and_currency(self, old_price, coin, currency) -> bool:
-
-        current_price = self.bitpanda.ticker(coin, currency)
+    def by_price_coin(self, old_price, coin) -> bool:
+        current_price = self.glv.get_coin_prices()[coin]
 
         print(f'Coin: {coin},', f'Image: {old_price},', f'Current: {current_price}')
         if not self.by_price_and_old_price(current_price, old_price):
             return False
 
-        balance = self.bitpanda.get_balances(coin)
+        # loop = asyncio.get_event_loop()
+        # balance = loop.run_until_complete(self.bitpanda.get_balances(coin))
 
-        print(f'Coin: {balance["currency_code"]}, Balance: {balance["available"]}')
-        if not self.by_balance_and_current_price(balance, current_price):
-            return False
+        # print(f'Coin: {balance["currency_code"]}, Balance: {balance["available"]}')
+        # if not self.by_balance_and_current_price(balance, current_price):
+        #     return False
 
+        # self.close_loop(loop)
         return True
+
+    def close_loop(self, loop):
+        loop.run_until_complete(self.bitpanda.close_client())

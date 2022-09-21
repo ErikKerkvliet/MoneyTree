@@ -19,7 +19,7 @@ class ImageHandler:
             if pixels[last_pixel][i] != 0:
                 coin = self.glv.coins[i]
                 exchange_type_id = pixels[last_pixel][i]
-            extra_data.append(pixels[i][len(pixels)])
+            extra_data.append(pixels[i][last_pixel])
 
         return {
             'coin': coin,

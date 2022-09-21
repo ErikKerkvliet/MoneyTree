@@ -2,6 +2,8 @@ from PIL import Image
 from bitpandaCalls import BitpandaCalls
 from imageHandler import ImageHandler
 
+DEFAULT_CURRENCY = 'EUR'
+ACTION_IMAGES_PATH = './../action_images'
 
 class Globalvar:
 
@@ -10,6 +12,8 @@ class Globalvar:
         self.coins = self.currencies()
         self.bitpanda = BitpandaCalls(self)
         self.image_handler = ImageHandler(self)
+        self.coin_prices = {}
+        self.price_update_time = None
 
     def get_private_data(self) -> dict:
         return {
@@ -35,6 +39,8 @@ class Globalvar:
 
         pixels = image.load()
         width, height = image.size
+        if width != 224 or height != 224:
+            return []
 
         image_data = []
         for x in range(width):
@@ -54,6 +60,18 @@ class Globalvar:
                 coins[coin] = {'EUR': 1.0}
 
         return coins
+
+    def set_coin_prices(self, coin_prices: dict):
+        self.coin_prices = coin_prices
+
+    def get_coin_prices(self) -> dict:
+        return self.coin_prices
+
+    def set_price_update_time(self, price_update_time):
+        self.price_update_time = price_update_time
+
+    def get_price_update_time(self):
+        return self.price_update_time
 
     @staticmethod
     def currencies() -> list:
