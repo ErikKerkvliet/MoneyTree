@@ -4,7 +4,7 @@ from bitpanda.enums import OrderSide
 from bitpanda.Pair import Pair
 from globalvar import DEFAULT_CURRENCY
 
-import time
+# import time
 import asyncio
 
 
@@ -27,12 +27,15 @@ class ExchangeHandler:
 
         if not self.validate.by_price_coin(extracted['price'], extracted['coin']):
             self.stop_thread()
+            return
 
         self.exchange_type = OrderSide.BUY.value if self.exchange_type == OrderSide.SELL.value else OrderSide.SELL.value
 
         # self.create_order(extracted)
 
         self.stop_thread()
+
+        return True
 
     def create_order(self, exchange_data):
         pair = self.get_pair(exchange_data['coin'], self.exchange_type)

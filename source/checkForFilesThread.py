@@ -18,8 +18,8 @@ class CheckForFilesThread(threading.Thread):
     def run(self):
         while True:
             action_images = os.listdir(ACTION_IMAGES_PATH)
-            for image_path in action_images:
-                self.start_exchange(f'{ACTION_IMAGES_PATH}/{image_path}')
+            for file_name in action_images:
+                self.start_exchange(file_name)
 
             time.sleep(1)
 
@@ -32,16 +32,17 @@ class CheckForFilesThread(threading.Thread):
     def is_running(self) -> bool:
         return self._running
 
-    def start_exchange(self, image_path):
-        if '.png' not in image_path:
+    def start_exchange(self, file_name):
+        if '.png' not in file_name:
             return
 
-        pixel_data = self.glv.get_image_pixel_data(image_path)
+        pixel_data = self.glv.get_image_handler().get_image_pixel_data(f'{ACTION_IMAGES_PATH}/{file_name}')
 
         if not pixel_data:
             return
 
         image_data = self.glv.image_handler.extract_data(pixel_data)
+        image_data['name'] = file_name
 
         exchange_type = self.exchange_type if self.exchange_type is not None else image_data['exchange_type']
 

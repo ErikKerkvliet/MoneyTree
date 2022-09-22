@@ -1,10 +1,30 @@
 from bitpanda.enums import OrderSide
+from PIL import Image
 
 
 class ImageHandler:
 
     def __init__(self, glv):
         self.glv = glv
+
+    # noinspection PyUnresolvedReferences
+    @staticmethod
+    def get_image_pixel_data(path) -> list:
+        image = Image.open(path)
+
+        pixels = image.load()
+        width, height = image.size
+        if width != 224 or height != 224:
+            return []
+
+        image_data = []
+        for x in range(width):
+            image_data.append([])
+            for y in range(height):
+                pixel = pixels[x, y]
+                image_data[x].append(pixel)
+
+        return image_data
 
     def extract_data(self, image_data: list) -> dict:
         last_pixel = len(image_data) - 1

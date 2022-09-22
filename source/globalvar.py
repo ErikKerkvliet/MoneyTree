@@ -1,9 +1,12 @@
-from PIL import Image
+from os import rename, path
+
 from bitpandaCalls import BitpandaCalls
 from imageHandler import ImageHandler
 
 DEFAULT_CURRENCY = 'EUR'
 ACTION_IMAGES_PATH = './../action_images'
+DONE_PATH = './../done'
+
 
 class Globalvar:
 
@@ -32,25 +35,6 @@ class Globalvar:
     def get_image_handler(self):
         return self.image_handler
 
-    # noinspection PyUnresolvedReferences
-    @staticmethod
-    def get_image_pixel_data(path) -> list:
-        image = Image.open(path)
-
-        pixels = image.load()
-        width, height = image.size
-        if width != 224 or height != 224:
-            return []
-
-        image_data = []
-        for x in range(width):
-            image_data.append([])
-            for y in range(height):
-                pixel = pixels[x, y]
-                image_data[x].append(pixel)
-
-        return image_data
-
     def coin_order(self, coins_data):
         coins = {}
         for coin in self.coins:
@@ -72,6 +56,13 @@ class Globalvar:
 
     def get_price_update_time(self):
         return self.price_update_time
+
+    @staticmethod
+    def move_action_image(file_name):
+        if path.isfile(f'{ACTION_IMAGES_PATH}/{file_name}'):
+            rename(f'{ACTION_IMAGES_PATH}/{file_name}', f'{DONE_PATH}/{file_name}')
+        else:
+            print(f'File: {ACTION_IMAGES_PATH}/{file_name} does not exist.')
 
     @staticmethod
     def currencies() -> list:

@@ -1,8 +1,8 @@
 import sys
 import logging
-import time
 
 from globalvar import Globalvar
+from make import Make
 from checkForFilesThread import CheckForFilesThread
 from tickerThread import TickerThread
 from threadManager import ThreadManager
@@ -20,6 +20,7 @@ class Main:
         self.image_paths = image_paths.split(',')
         self.exchange_type = exchange_type
         self.glv = Globalvar()
+        self.make = Make()
         self.threadManager = ThreadManager(self.glv)
 
     def start(self):
@@ -35,14 +36,14 @@ class Main:
             self.problem_with_file(image_path)
             return
 
-        pixel_data = self.glv.get_image_pixel_data(image_path)
+        pixel_data = self.glv.get_image_handler().get_image_pixel_data(image_path)
 
         if not pixel_data:
             self.problem_with_file(image_path)
             return
 
         image_data = self.glv.image_handler.extract_data(pixel_data)
-
+        image_data['name'] = image_path.split('/')[-1]
         exchange_type = self.exchange_type if self.exchange_type is not None else image_data['exchange_type']
 
         self.threadManager.add(ExchangeThread(self.glv, exchange_type, image_data))
@@ -63,9 +64,9 @@ if __name__ == '__main__':
         main = Main(sys.argv[1], sys.argv[2].upper())
     else:
         paths = [
-            # "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:32_DUSK.png",
-            # "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:31_CRV.png",
-            # "/home/erik/PycharmProjects/TrainingData/data/images_20/no/20-09-2022 01:09:30_YFI.png"
+            "/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:25_DOT.png",
+            "/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:27_ENJ.png",
+            "/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:28_LSK.png"
         ]
         main = Main(','.join(paths), OrderSide.BUY.value)
     main.start()
