@@ -2,10 +2,21 @@ from os import rename, path
 
 from bitpandaCalls import BitpandaCalls
 from imageHandler import ImageHandler
+from predictor import Predictor
+from threadManager import ThreadManager
 
 DEFAULT_CURRENCY = 'EUR'
 ACTION_IMAGES_PATH = './../action_images'
 DONE_PATH = './../done'
+KERAS_MODEL_PATH = './../keras_model'
+TRAINING_DATA_PATH = './../../TrainingData/data'
+LABEL_FOLDERS = ['yes_plus']
+
+PREDICTIONS = {
+    0: 'BUY',
+    1: 'SELL',
+    2: 'NONE',
+}
 
 
 class Globalvar:
@@ -13,10 +24,13 @@ class Globalvar:
     def __init__(self):
         self.private = self.get_private_data()
         self.coins = self.currencies()
-        self.bitpanda = BitpandaCalls(self)
-        self.image_handler = ImageHandler(self)
         self.coin_prices = {}
         self.price_update_time = None
+
+        self.bitpanda = BitpandaCalls(self)
+        self.image_handler = ImageHandler(self)
+        self.predictor = Predictor(self)
+        self.thread_manager = ThreadManager(self)
 
     def get_private_data(self) -> dict:
         return {
@@ -32,8 +46,14 @@ class Globalvar:
     def get_bitpanda_calls(self) -> BitpandaCalls:
         return self.bitpanda
 
-    def get_image_handler(self):
+    def get_image_handler(self) -> ImageHandler:
         return self.image_handler
+
+    def get_predictor(self) -> Predictor:
+        return self.predictor
+
+    def get_thread_manager(self) -> ThreadManager:
+        return self.thread_manager
 
     def coin_order(self, coins_data):
         coins = {}
@@ -45,7 +65,7 @@ class Globalvar:
 
         return coins
 
-    def set_coin_prices(self, coin_prices: dict):
+    def set_coin_prices(self, coin_prices: dict) -> None:
         self.coin_prices = coin_prices
 
     def get_coin_prices(self) -> dict:
@@ -58,11 +78,15 @@ class Globalvar:
         return self.price_update_time
 
     @staticmethod
-    def move_action_image(file_name):
+    def move_action_image(file_name) -> None:
         if path.isfile(f'{ACTION_IMAGES_PATH}/{file_name}'):
             rename(f'{ACTION_IMAGES_PATH}/{file_name}', f'{DONE_PATH}/{file_name}')
         else:
             print(f'File: {ACTION_IMAGES_PATH}/{file_name} does not exist.')
+
+    @staticmethod
+    def move_file(file_path) -> None:
+        rename(file_path, f'{ACTION_IMAGES_PATH}/{file_path}')
 
     @staticmethod
     def currencies() -> list:
