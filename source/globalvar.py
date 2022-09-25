@@ -4,6 +4,7 @@ from bitpandaCalls import BitpandaCalls
 from imageHandler import ImageHandler
 from predictor import Predictor
 from threadManager import ThreadManager
+from exchangeManager import ExchangeManager
 
 DEFAULT_CURRENCY = 'EUR'
 ACTION_IMAGES_PATH = './../action_images'
@@ -31,6 +32,7 @@ class Globalvar:
         self.image_handler = ImageHandler(self)
         self.predictor = Predictor(self)
         self.thread_manager = ThreadManager(self)
+        self.exchange_manager = ExchangeManager(self)
 
     def get_private_data(self) -> dict:
         return {
@@ -51,6 +53,9 @@ class Globalvar:
 
     def get_predictor(self) -> Predictor:
         return self.predictor
+
+    def get_exchange_manager(self) -> ExchangeManager:
+        return self.exchange_manager
 
     def get_thread_manager(self) -> ThreadManager:
         return self.thread_manager

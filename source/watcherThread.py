@@ -47,9 +47,9 @@ class WatcherThread(threading.Thread):
                     files = os.listdir(f'{watch_path}/{image_folder}/{label_folder}')
                     for file in files:
                         file_path = f'{watch_path}/{image_folder}/{label_folder}/{file}'
-                        prediction = self.predictor.predict(file_path)
-
-                        self.handle_prediction(prediction, file)
+                        # prediction = self.predictor.predict(file_path)
+                        #
+                        # self.handle_prediction(prediction, file)
 
         time.sleep(1)
 

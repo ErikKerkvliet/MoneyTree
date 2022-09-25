@@ -1,6 +1,7 @@
 from exchangeThread import ExchangeThread
 
-from globalvar import ACTION_IMAGES_PATH
+# from globalvar import ACTION_IMAGES_PATH
+ACTION_IMAGES_PATH = './../action_images'
 
 
 class ExchangeManager:

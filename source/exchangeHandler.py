@@ -2,7 +2,8 @@ from validate import Validate
 
 from bitpanda.enums import OrderSide
 from bitpanda.Pair import Pair
-from globalvar import DEFAULT_CURRENCY
+# from globalvar import DEFAULT_CURRENCY
+DEFAULT_CURRENCY = 'EUR'
 
 # import time
 import asyncio

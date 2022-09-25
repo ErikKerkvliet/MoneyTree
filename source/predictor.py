@@ -3,39 +3,56 @@ import numpy as np
 from keras.models import load_model
 from PIL import Image, ImageOps
 
+PREDICTIONS = {
+    0: 'BUY',
+    1: 'SELL',
+    2: 'NONE',
+}
+
 
 class Predictor:
 
-    def __init__(self, glv):
+    def __init__(self, glv=None):
         self.glv = glv
         self.image = None
         self.model = self.load_model()
+        self.predict("/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:25_DOT.png")
 
     @staticmethod
     def load_model():
-        return load_model('../keras_model/keras_modal.h5')
+        return load_model('../keras_model/keras_model.h5', compile=False)
 
     @staticmethod
     def load_image(image_path):
-        image = Image.open(image_path)
+        return Image.open(image_path).convert('L')
 
         size = (224, 224)
-        return ImageOps.fit(image, size, Image.ANTIALIAS)
+        return ImageOps.fit(image, size)
 
     def load_image_data(self, image_path):
         image = self.load_image(image_path)
+        image_array = np.array(image)
+        # image_array = np.asarray(image)
 
-        image_array = np.asarray(image)
+        # normalized_image_array = (image.astype(np.float32) / 127.0) - 1
 
-        normalized_image_array = (image_array.astype(np.float32) / 127.0) - 1
+        data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.uint8)
 
-        data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-
-        data[0] = normalized_image_array
+        # data[0] = normalized_image_array
 
         return data
 
     def predict(self, image_path):
         image_data = self.load_image_data(image_path)
 
-        return self.model.predict(image_data)
+        prediction = self.model.predict(image_data)
+        predictions = prediction[0].tolist()
+        for (i, prediction) in enumerate(predictions):
+            print(prediction)
+            if prediction > 0.85:
+                print(PREDICTIONS[i])
+            if prediction < 0.85:
+                print(PREDICTIONS[i])
+
+
+predictor = Predictor()
