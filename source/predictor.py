@@ -1,13 +1,8 @@
 import numpy as np
+import globalvar
 
 from keras.models import load_model
 from PIL import Image, ImageOps
-
-PREDICTIONS = {
-    0: 'BUY',
-    1: 'SELL',
-    2: 'NONE',
-}
 
 
 class Predictor:
@@ -16,7 +11,7 @@ class Predictor:
         self.glv = glv
         self.image = None
         self.model = self.load_model()
-        self.predict("/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:25_DOT.png")
+        # self.predict("/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:25_DOT.png")
 
     @staticmethod
     def load_model():
@@ -47,12 +42,10 @@ class Predictor:
 
         prediction = self.model.predict(image_data)
         predictions = prediction[0].tolist()
-        for (i, prediction) in enumerate(predictions):
-            print(prediction)
-            if prediction > 0.85:
-                print(PREDICTIONS[i])
-            if prediction < 0.85:
-                print(PREDICTIONS[i])
-
-
-predictor = Predictor()
+        print(predictions)
+        if predictions[0] > predictions[1] < 0.5 and predictions[0] > 0.85:
+            return globalvar.PREDICTION_BUY
+        elif predictions[1] > predictions[0] < 0.5 and predictions[1] > 0.85:
+            return globalvar.PREDICTION_SELL
+        else:
+            return globalvar.PREDICTION_NONE

@@ -2,11 +2,6 @@ import threading
 import os
 import time
 
-from globalvar import PREDICTIONS
-from globalvar import LABEL_FOLDERS
-from globalvar import ACTION_IMAGES_PATH
-from globalvar import TRAINING_DATA_PATH
-
 from threadManager import ThreadManager
 from exchangeThread import ExchangeThread
 
@@ -21,8 +16,8 @@ class WatcherThread(threading.Thread):
 
     def run(self):
         while True:
-            self.watch(TRAINING_DATA_PATH)
-            action_images = os.listdir(ACTION_IMAGES_PATH)
+            self.watch(self.glv.TRAINING_DATA_PATH)
+            action_images = os.listdir(self.glv.ACTION_IMAGES_PATH)
             for file_name in action_images:
                 self.start_exchange(file_name)
 
@@ -43,7 +38,7 @@ class WatcherThread(threading.Thread):
             label_folders = os.listdir(f'{watch_path}/{image_folder}')
 
             for label_folder in label_folders:
-                if label_folder in LABEL_FOLDERS:
+                if label_folder in self.glv.LABEL_FOLDERS:
                     files = os.listdir(f'{watch_path}/{image_folder}/{label_folder}')
                     for file in files:
                         file_path = f'{watch_path}/{image_folder}/{label_folder}/{file}'
@@ -54,8 +49,8 @@ class WatcherThread(threading.Thread):
         time.sleep(1)
 
     def handle_prediction(self, prediction, file_path):
-        # for key in PREDICTIONS.keys():
-        if prediction == PREDICTIONS.keys()[0]:
+        # for key in self.glv.PREDICTIONS.keys():
+        if prediction == self.glv.PREDICTIONS.keys()[0]:
             self.start_exchange(file_path)
             self.glv.move_file(file_path)
 
@@ -63,7 +58,7 @@ class WatcherThread(threading.Thread):
         if '.png' not in file_name:
             return
 
-        pixel_data = self.glv.get_image_handler().get_image_pixel_data(f'{ACTION_IMAGES_PATH}/{file_name}')
+        pixel_data = self.glv.get_image_handler().get_image_pixel_data(f'{self.glv.ACTION_IMAGES_PATH}/{file_name}')
 
         if not pixel_data:
             return

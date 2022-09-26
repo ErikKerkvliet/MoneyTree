@@ -11,13 +11,11 @@ ACTION_IMAGES_PATH = './../action_images'
 DONE_PATH = './../done'
 KERAS_MODEL_PATH = './../keras_model'
 TRAINING_DATA_PATH = './../../TrainingData/data'
-LABEL_FOLDERS = ['yes_plus']
+LABEL_FOLDERS = ['no']
 
-PREDICTIONS = {
-    0: 'BUY',
-    1: 'SELL',
-    2: 'NONE',
-}
+PREDICTION_BUY = 'BUY'
+PREDICTION_SELL = 'SELL'
+PREDICTION_NONE = 'NONE'
 
 
 class Globalvar:
@@ -83,11 +81,12 @@ class Globalvar:
         return self.price_update_time
 
     @staticmethod
-    def move_action_image(file_name) -> None:
-        if path.isfile(f'{ACTION_IMAGES_PATH}/{file_name}'):
-            rename(f'{ACTION_IMAGES_PATH}/{file_name}', f'{DONE_PATH}/{file_name}')
+    def move_to_done(file_path) -> None:
+        file_name = file_path.split('/')[-1]
+        if path.isfile(file_path):
+            rename(file_path, f'{DONE_PATH}/{file_name}')
         else:
-            print(f'File: {ACTION_IMAGES_PATH}/{file_name} does not exist.')
+            print(f'File: {file_path} does not exist.')
 
     @staticmethod
     def move_file(file_path) -> None:

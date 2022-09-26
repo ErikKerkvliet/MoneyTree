@@ -25,7 +25,6 @@ class Main:
         self.thread_manager = self.glv.get_thread_manager()
 
     def start(self):
-        return
         self.thread_manager.add(TickerThread(self.glv))
 
         self.watcher.watch()

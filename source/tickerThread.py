@@ -1,8 +1,7 @@
 import datetime
 import threading
 import time
-
-from globalvar import DEFAULT_CURRENCY
+import globalvar
 
 
 class TickerThread(threading.Thread):
@@ -12,13 +11,13 @@ class TickerThread(threading.Thread):
         self.glv = glv
         self.bitpanda = self.glv.get_bitpanda_calls()
         self.glv.set_price_update_time(datetime.datetime.now())
-        self.glv.set_coin_prices(self.bitpanda.ticker(currency=DEFAULT_CURRENCY))
+        self.glv.set_coin_prices(self.bitpanda.ticker(currency=globalvar.DEFAULT_CURRENCY))
 
     def run(self):
         print(f'Start time: {self.glv.get_price_update_time()}')
         while True:
 
-            coin_prices = self.bitpanda.ticker(currency=DEFAULT_CURRENCY)
+            coin_prices = self.bitpanda.ticker(currency=globalvar.DEFAULT_CURRENCY)
             keys = coin_prices.keys()
 
             # See if coin in response are all present in self.glv.coins

@@ -2,11 +2,10 @@ from validate import Validate
 
 from bitpanda.enums import OrderSide
 from bitpanda.Pair import Pair
-# from globalvar import DEFAULT_CURRENCY
-DEFAULT_CURRENCY = 'EUR'
 
 # import time
 import asyncio
+import globalvar
 
 
 class ExchangeHandler:
@@ -33,7 +32,7 @@ class ExchangeHandler:
         self.exchange_type = OrderSide.BUY.value if self.exchange_type == OrderSide.SELL.value else OrderSide.SELL.value
 
         # self.create_order(extracted)
-
+        print(self.exchange_type)
         self.stop_thread()
 
         return True
@@ -60,10 +59,9 @@ class ExchangeHandler:
     def close_loop(self, loop):
         loop.run_until_complete(self.bitpanda.close_client())
 
-    @staticmethod
-    def get_pair(coin, exchange_type):
+    def get_pair(self, coin, exchange_type):
         if exchange_type == OrderSide.BUY.value:
-            return Pair(coin, DEFAULT_CURRENCY)
+            return Pair(coin, globalvar.DEFAULT_CURRENCY)
         elif exchange_type == OrderSide.SELL.value:
-            return Pair(DEFAULT_CURRENCY, coin)
+            return Pair(globalvar.DEFAULT_CURRENCY, coin)
         return None
