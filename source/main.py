@@ -41,9 +41,7 @@ if __name__ == '__main__':
         main = Main(sys.argv[1], sys.argv[2].upper())
     else:
         paths = [
-            "/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:25_DOT.png",
-            "/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:27_ENJ.png",
-            "/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:28_LSK.png"
+
         ]
         main = Main(','.join(paths), OrderSide.BUY.value)
     main.start()

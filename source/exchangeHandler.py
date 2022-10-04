@@ -1,9 +1,9 @@
 from validate import Validate
-
+from testing import Testing
 from bitpanda.enums import OrderSide
 from bitpanda.Pair import Pair
 
-# import time
+import time
 import asyncio
 import globalvar
 
@@ -17,19 +17,28 @@ class ExchangeHandler:
         self.amount = 1
 
         self.validate = Validate(self.glv)
+        self.testing = Testing(self.glv)
         self.bitpanda = self.glv.get_bitpanda_calls()
 
-    def start(self, extracted: dict):
+    def start(self, extracted: dict) -> bool:
+
+        self.testing.test(extracted)
+        # if not globalvar.TESTING:
 
         # self.create_order(extracted)
 
-        # time.sleep(extracted['wait_time'])
+        time.sleep(extracted['wait_time'])
 
         if not self.validate.by_price_coin(extracted['price'], extracted['coin']):
             self.stop_thread()
-            return
+            return False
 
         self.exchange_type = OrderSide.BUY.value if self.exchange_type == OrderSide.SELL.value else OrderSide.SELL.value
+
+        if globalvar.TESTING:
+            self.testing.test(extracted)
+            self.stop_thread()
+            return False
 
         # self.create_order(extracted)
         print(self.exchange_type)

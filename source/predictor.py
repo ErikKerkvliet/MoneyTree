@@ -42,7 +42,7 @@ class Predictor:
 
         prediction = self.model.predict(image_data)
         predictions = prediction[0].tolist()
-        print(predictions)
+        # print(predictions)
         if predictions[0] > predictions[1] < 0.5 and predictions[0] > 0.85:
             return globalvar.PREDICTION_BUY
         elif predictions[1] > predictions[0] < 0.5 and predictions[1] > 0.85:

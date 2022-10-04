@@ -36,7 +36,7 @@ class TickerThread(threading.Thread):
                     print(coin_prices['BTC'])
                     break
 
-            time.sleep(1)
+            time.sleep(0.5)
 
         self.stop()
         return

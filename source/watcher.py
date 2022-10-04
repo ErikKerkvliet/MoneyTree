@@ -15,7 +15,7 @@ class Watcher:
             self.watch_prediction_images()
             self.watch_action_images()
 
-            time.sleep(1)
+            time.sleep(0.5)
 
     def watch_action_images(self):
         action_images = os.listdir(globalvar.ACTION_IMAGES_PATH)
