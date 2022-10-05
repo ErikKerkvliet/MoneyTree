@@ -22,8 +22,9 @@ class ExchangeHandler:
 
     def start(self, extracted: dict) -> bool:
 
-        self.testing.test(extracted)
-        # if not globalvar.TESTING:
+        if globalvar.TESTING:
+            self.testing.test(extracted)
+            return False
 
         # self.create_order(extracted)
 

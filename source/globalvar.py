@@ -34,6 +34,13 @@ class Globalvar:
         self.thread_manager = ThreadManager(self)
         self.exchange_manager = ExchangeManager(self)
         self.balance = 0.0
+        self.test_balances = {}
+        self.start_test()
+
+    def start_test(self):
+        self.test_balances['EUR'] = 100
+        for coin in self.coins:
+            self.set_test_balance(coin, 0)
 
     def get_private_data(self) -> dict:
         return {
@@ -45,6 +52,20 @@ class Globalvar:
 
     def get_balance(self) -> float:
         return self.balance
+
+    def add_test_balance(self, coin, balance) -> None:
+        self.test_balances[coin] += balance
+
+    def set_test_balance(self, coin=None, balance=None) -> None:
+        if coin and balance is not None:
+            self.test_balances[coin] = balance
+        if coin is None:
+            self.test_balances = balance
+
+    def get_test_balance(self, coin=None) -> dict:
+        if coin:
+            return self.test_balances[coin]
+        return self.test_balances
 
     @staticmethod
     def get_key() -> str:
@@ -80,7 +101,9 @@ class Globalvar:
     def set_coin_prices(self, coin_prices: dict) -> None:
         self.coin_prices = coin_prices
 
-    def get_coin_prices(self) -> dict:
+    def get_coin_prices(self, coin=None) -> dict:
+        if coin:
+            return self.coin_prices[coin]
         return self.coin_prices
 
     def set_price_update_time(self, price_update_time):
