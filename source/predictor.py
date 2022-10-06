@@ -10,12 +10,10 @@ class Predictor:
     def __init__(self, glv=None):
         self.glv = glv
         self.image = None
-        self.model = self.load_model()
-        # self.predict("/home/erik/PycharmProjects/TrainingData/data/images_50/no/23-09-2022 01:04:25_DOT.png")
 
     @staticmethod
-    def load_model():
-        return load_model('../keras_model/keras_model.h5', compile=False)
+    def load_model(ticker_time):
+        return load_model(f'{globalvar.KERAS_MODEL_PATH}_{ticker_time}/keras_model.h5', compile=False)
 
     @staticmethod
     def load_image(image_path):
@@ -37,10 +35,12 @@ class Predictor:
 
         return data
 
-    def predict(self, image_path):
+    def predict(self, image_path, ticker_time):
         image_data = self.load_image_data(image_path)
 
-        prediction = self.model.predict(image_data)
+        model = self.load_model(ticker_time)
+
+        prediction = model.predict(image_data)
         predictions = prediction[0].tolist()
         # print(predictions)
         if predictions[0] > predictions[1] < 0.5 and predictions[0] > 0.85:

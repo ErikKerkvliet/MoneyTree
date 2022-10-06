@@ -9,9 +9,9 @@ from exchangeManager import ExchangeManager
 DEFAULT_CURRENCY = 'EUR'
 ACTION_IMAGES_PATH = './../action_images'
 DONE_PATH = './../done'
-KERAS_MODEL_PATH = './../keras_model'
+KERAS_MODEL_PATH = '../keras_models/model'
 TRAINING_DATA_PATH = './../../TrainingData/data'
-LABEL_FOLDERS = ['no']
+LABEL_FOLDERS = ['yes_plus']
 
 PREDICTION_BUY = 'BUY'
 PREDICTION_SELL = 'SELL'

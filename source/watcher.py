@@ -27,12 +27,13 @@ class Watcher:
         image_folders = os.listdir(watch_path)
         for image_folder in image_folders:
             label_folders = os.listdir(f'{watch_path}/{image_folder}')
+            ticker_time = image_folder.split('_')[-1]
             for label_folder in label_folders:
                 if label_folder in globalvar.LABEL_FOLDERS:
                     files = os.listdir(f'{watch_path}/{image_folder}/{label_folder}')
                     for file in files:
                         file_path = f'{watch_path}/{image_folder}/{label_folder}/{file}'
-                        prediction = self.predictor.predict(file_path)
+                        prediction = self.predictor.predict(file_path, ticker_time)
 
                         if prediction == globalvar.PREDICTION_SELL:
                             self.exchange_manager.start(file_path)

@@ -19,14 +19,14 @@ class Testing:
         self.glv.add_test_balance(globalvar.DEFAULT_CURRENCY, -amount)
         self.glv.add_test_balance(extracted['coin'], old_price)
 
-        # time.sleep(extracted['wait_time'])
+        time.sleep(extracted['wait_time'])
 
         price = self.glv.get_coin_prices()[extracted['coin']]
 
-        # if not self.glv.validate.by_price_coin(old_price, price):
-        #     self.glv.add_test_balance(globalvar.DEFAULT_CURRENCY, 0.99)
-        #     self.glv.add_test_balance(extracted['coin'], -old_price)
-        #     return False
+        if not self.glv.validate.by_price_coin(old_price, price):
+            self.glv.add_test_balance(globalvar.DEFAULT_CURRENCY, 0.99)
+            self.glv.add_test_balance(extracted['coin'], -old_price)
+            return False
 
         gain = (price - old_price) * 0.97
 

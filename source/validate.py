@@ -1,4 +1,5 @@
 import asyncio
+import globalvar
 
 
 class Validate:
@@ -29,14 +30,16 @@ class Validate:
         if not self.by_price_and_old_price(current_price, old_price):
             return False
 
-        # loop = asyncio.get_event_loop()
-        # balance = loop.run_until_complete(self.bitpanda.get_balances(coin))
+        if not globalvar.TESTING:
+            loop = asyncio.get_event_loop()
+            balance = loop.run_until_complete(self.bitpanda.get_balances(coin))
 
-        # print(f'Coin: {balance["currency_code"]}, Balance: {balance["available"]}')
-        # if not self.by_balance_and_current_price(balance, current_price):
-        #     return False
+            print(f'Coin: {balance["currency_code"]}, Balance: {balance["available"]}')
+            if not self.by_balance_and_current_price(balance, current_price):
+                return False
 
-        # self.close_loop(loop)
+            self.close_loop(loop)
+
         return True
 
     def close_loop(self, loop):
